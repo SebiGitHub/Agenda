@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "140028759855",
+    "firebase_url": "https://agenda-81f77-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "agenda-81f77",
+    "storage_bucket": "agenda-81f77.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140028759855:android:ead52bb48b470cce065bda",
+        "android_client_info": {
+          "package_name": "com.example.agenda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAORFYiVFh-JCfTctLVoK5TpvSZdvuPFmI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

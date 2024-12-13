@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Agenda de contactos</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="telefono">Teléfono</string>
+    <string name="apellidos">Apellidos</string>
+    <string name="nombre">Nombre</string>
+    <string name="contacto">Contacto</string>
+    <string name="lista">Listado de contactos</string>
+    <string name="crear">Crear Contacto</string>
+
+    <string name="apellidos_c">Apellidos</string>
+    <string name="nombre_c">Nombre</string>
+    <string name="telefono_c">Teléfono (Móvil)</string>
+    <string name="g_contacto">Guardar contacto</string>
+    <string name="v_contactos">Ver contactos</string>
+    <string name="a_img">Añadir Imagen</string>
+    <string name="a_cum">Añadir Cumpleaños</string>
+
+
+    <string name="volver">Volver</string>
+
+</resources>
