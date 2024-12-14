@@ -3,6 +3,7 @@ package com.example.agenda.adapter
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.media3.common.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agenda.models.Contactos
 import com.example.agenda.R
@@ -52,14 +52,28 @@ class AdapterContacto(private val contactos: ArrayList<Contactos>, private val c
         try {
             if (!aContacto.imagen.isNullOrEmpty()) {
                 val uriImagen = Uri.parse(aContacto.imagen)
+
+                // Verificar si el URI es válido y la imagen puede abrirse
                 val inputStream = fondoLayout.context.contentResolver.openInputStream(uriImagen)
-                val drawable = Drawable.createFromStream(inputStream, null)
-                fondoLayout.background = drawable
+                if (inputStream != null) {
+                    val drawable = Drawable.createFromStream(inputStream, null)
+                    fondoLayout.background = drawable
+                } else {
+                    // Si no se puede abrir el URI, establecer un fondo por defecto
+                    fondoLayout.setBackgroundColor(context.getColor(R.color.fondo_circulo))
+                    Toast.makeText(context, "1", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                // Si no hay imagen, establecer un fondo por defecto
+                fondoLayout.setBackgroundColor(context.getColor(R.color.fondo_boton))
+                Toast.makeText(context, "2", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
             Log.e("Error al cargar fondo", "Error: ${e.message}")
+            // En caso de error, poner un fondo por defecto
+            fondoLayout.setBackgroundColor(context.getColor(R.color.verde))
+            Toast.makeText(context, "3", Toast.LENGTH_LONG).show()
         }
-
 
         // Botón eliminar
         holder.btnEliminar.setOnClickListener {
@@ -68,6 +82,7 @@ class AdapterContacto(private val contactos: ArrayList<Contactos>, private val c
             notifyItemRemoved(position)
         }
     }
+
 
 
     // Función que elimina un producto de la base de datos en Firebase dado su ID.
