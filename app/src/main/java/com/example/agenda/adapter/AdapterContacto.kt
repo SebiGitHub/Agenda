@@ -12,38 +12,41 @@ import com.example.agenda.models.Contactos
 import com.example.agenda.R
 import com.google.firebase.database.FirebaseDatabase
 
-class AdapterContacto (private val productos: ArrayList<Contactos>, private val context: Context) :
+class AdapterContacto(private val contactos: ArrayList<Contactos>, private val context: Context) :
     RecyclerView.Adapter<AdapterContacto.ViewHolder>() {
-        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val nombre: TextView = itemView.findViewById(R.id.tvNombre)
-            val precio: TextView = itemView.findViewById(R.id.tvPrecio)
-            val descripcion: TextView = itemView.findViewById(R.id.tvDescription)
 
-            //Agrego el boton para eliminar
-            val btnEliminar : Button = itemView.findViewById(R.id.btnEliminar)
-        }
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val nombre: TextView = itemView.findViewById(R.id.tvNombre)
+        val apellidos: TextView = itemView.findViewById(R.id.tvApellidos)
+        val telefono: TextView = itemView.findViewById(R.id.tvTelefono)
+        val fechaCumple: TextView = itemView.findViewById(R.id.tvFechaCumple) // Nuevo campo
+
+        // Botón para eliminar
+        val btnEliminar: Button = itemView.findViewById(R.id.btnEliminar)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_productos, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_contactos, parent, false)
         return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return productos.size
+        return contactos.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val producto = productos[position]
-        holder.nombre.text = producto.nombre
-        holder.precio.text = producto.apellidos.toString()
-        holder.descripcion.text = producto.telefono
+        val a_contacto = contactos[position]
+        holder.nombre.text = a_contacto.nombre
+        holder.apellidos.text = a_contacto.apellidos
+        holder.telefono.text = a_contacto.telefono
+        holder.fechaCumple.text = "Cumpleaños: ${a_contacto.cumpleanos}" // Mostrar fecha de cumpleaños
 
-        //Funcion del boton
+        // Función del botón eliminar
         holder.btnEliminar.setOnClickListener {
-            //LLamada al metodo eliminar atribuyendole el id y el context
-            eliminar(producto.id, context)
-            //Eliminar la posicion actual y mostrarlo
-            productos.removeAt(position)
+            // Llamada al método eliminar atribuyéndole el id y el context
+            eliminar(a_contacto.id, context)
+            // Eliminar la posición actual y actualizar la vista
+            contactos.removeAt(position)
             notifyItemRemoved(position)
         }
     }
@@ -53,12 +56,14 @@ class AdapterContacto (private val productos: ArrayList<Contactos>, private val 
         // Obtiene la instancia de la base de datos de Firebase.
         val db = FirebaseDatabase.getInstance()
         // Referencia a la rama "Productos" en la base de datos.
-        val productos_ref = db.getReference("Productos")
+        val productosRef = db.getReference("Contactos")
 
         // Elimina el nodo correspondiente al ID proporcionado.
-        productos_ref.child(id!!).removeValue().addOnSuccessListener {
+        productosRef.child(id!!).removeValue().addOnSuccessListener {
             // Si la eliminación es exitosa, muestra un mensaje al usuario.
             Toast.makeText(context, "Producto eliminado exitosamente", Toast.LENGTH_LONG).show()
+        }.addOnFailureListener {
+            Toast.makeText(context, "Error al eliminar el producto", Toast.LENGTH_LONG).show()
         }
     }
 }

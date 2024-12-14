@@ -26,19 +26,26 @@
             android:textSize="12sp"
             tools:text="@string/nombre" />
         <TextView
-            android:id="@+id/tvPrecio"
+            android:id="@+id/tvApellidos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="12sp"
             tools:text="@string/apellidos" />
         <TextView
-            android:id="@+id/tvDescription"
+            android:id="@+id/tvTelefono"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="12sp"
             tools:text="@string/telefono" />
+        <TextView
+            android:id="@+id/tvFechaCumple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            tools:text="@string/cumple" />
 
         <!--Boton para eliminar-->
         <Button

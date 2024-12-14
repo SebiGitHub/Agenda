@@ -117,32 +117,39 @@
                     android:textColorHint="@color/texto_hint"
                     android:inputType="phone" />
             </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Botón para añadir cumpleaños -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCumpleanioContacto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCumpleanioContacto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/cumple_c"
+                    android:textColorHint="@color/texto_hint"
+                    android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Botón para añadir cumpleaños -->
-    <Button
-        android:id="@+id/btnAddBirthday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/a_cum"
-        android:backgroundTint="@color/fondo_boton"
-        app:layout_constraintTop_toBottomOf="@+id/cardFields"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp" />
+
 
     <!-- Botón Guardar -->
     <Button
         android:id="@+id/btnGuardar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/g_contacto"
         android:backgroundTint="@color/fondo_boton"
-        app:layout_constraintTop_toBottomOf="@+id/btnAddBirthday"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/g_contacto"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardFields" />
 
     <!-- Botón Ver contactos -->
     <Button
