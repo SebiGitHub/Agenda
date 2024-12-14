@@ -1,6 +1,7 @@
 package com.example.agenda
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,12 +38,13 @@ class VerAgendaActivity : AppCompatActivity() {
         contactosRecyclerView.layoutManager = LinearLayoutManager(this)
         contactosRecyclerView.setHasFixedSize(true)
 
-        contactosList = arrayListOf<Contactos>()
-
+        // Inicializa el adaptador sin que la lista esté vacía
+        contactosList = arrayListOf() // Lista vacía que se llenará con los contactos de Firebase
         adapterContactos = AdapterContacto(contactosList, this)
         contactosRecyclerView.adapter = adapterContactos
 
         getProductos()
+
 
         //Accion para volver al menu
         binding.btnVolver.setOnClickListener {
@@ -52,25 +54,41 @@ class VerAgendaActivity : AppCompatActivity() {
     }
 
     private fun getProductos() {
-        //Ruta de productos
+        // Referencia a la base de datos de Firebase
         database = FirebaseDatabase.getInstance().getReference("Contactos")
 
+        // Realiza una consulta de los datos
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    contactosList.clear()
-                    for (productosSnapshot in snapshot.children) {
-                        val contacto = productosSnapshot.getValue(Contactos::class.java)
-                        contactosList.add(contacto!!)
+                    contactosList.clear()  // Limpiar la lista de contactos actual
+                    for (contactosSnapshot in snapshot.children) {
+                        // Obtenemos cada contacto y lo agregamos a la lista
+                        val contacto = contactosSnapshot.getValue(Contactos::class.java)
+                        if (contacto != null) {
+                            contactosList.add(contacto)  // Agregar el contacto
+                        }
                     }
-                    adapterContactos.notifyDataSetChanged()
+
+                    // Verificamos si la lista no está vacía antes de actualizar el adaptador
+                    if (contactosList.isNotEmpty()) {
+                        adapterContactos.notifyDataSetChanged()  // Notificar al adaptador
+                    } else {
+                        // Si no hay contactos, muestra un mensaje en la UI
+                        Toast.makeText(this@VerAgendaActivity, "No hay contactos disponibles", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // Si no hay contactos, muestra un mensaje
+                    Toast.makeText(this@VerAgendaActivity, "No hay datos en la base de datos", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                // Si ocurre un error con la consulta, muestra un mensaje
+                Toast.makeText(this@VerAgendaActivity, "Error al acceder a la base de datos", Toast.LENGTH_SHORT).show()
             }
-
         })
     }
+
+
 }

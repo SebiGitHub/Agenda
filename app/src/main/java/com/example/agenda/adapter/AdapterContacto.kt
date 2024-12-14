@@ -1,12 +1,16 @@
 package com.example.agenda.adapter
 
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.media3.common.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agenda.models.Contactos
 import com.example.agenda.R
@@ -19,7 +23,7 @@ class AdapterContacto(private val contactos: ArrayList<Contactos>, private val c
         val nombre: TextView = itemView.findViewById(R.id.tvNombre)
         val apellidos: TextView = itemView.findViewById(R.id.tvApellidos)
         val telefono: TextView = itemView.findViewById(R.id.tvTelefono)
-        val fechaCumple: TextView = itemView.findViewById(R.id.tvFechaCumple) // Nuevo campo
+        val fechaCumple: TextView = itemView.findViewById(R.id.tvFechaCumple)
 
         // Botón para eliminar
         val btnEliminar: Button = itemView.findViewById(R.id.btnEliminar)
@@ -35,21 +39,36 @@ class AdapterContacto(private val contactos: ArrayList<Contactos>, private val c
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val a_contacto = contactos[position]
-        holder.nombre.text = a_contacto.nombre
-        holder.apellidos.text = a_contacto.apellidos
-        holder.telefono.text = a_contacto.telefono
-        holder.fechaCumple.text = "Cumpleaños: ${a_contacto.cumpleanos}" // Mostrar fecha de cumpleaños
+        val aContacto = contactos[position]
+        holder.nombre.text = aContacto.nombre
+        holder.apellidos.text = aContacto.apellidos
+        holder.telefono.text = aContacto.telefono
+        holder.fechaCumple.text = "Cumpleaños: ${aContacto.cumpleanos}"
 
-        // Función del botón eliminar
+        // Obtener referencia al LinearLayout
+        val fondoLayout = holder.itemView.findViewById<LinearLayout>(R.id.imgDefectoFondo)
+
+        // Configurar imagen como fondo del LinearLayout
+        try {
+            if (!aContacto.imagen.isNullOrEmpty()) {
+                val uriImagen = Uri.parse(aContacto.imagen)
+                val inputStream = fondoLayout.context.contentResolver.openInputStream(uriImagen)
+                val drawable = Drawable.createFromStream(inputStream, null)
+                fondoLayout.background = drawable
+            }
+        } catch (e: Exception) {
+            Log.e("Error al cargar fondo", "Error: ${e.message}")
+        }
+
+
+        // Botón eliminar
         holder.btnEliminar.setOnClickListener {
-            // Llamada al método eliminar atribuyéndole el id y el context
-            eliminar(a_contacto.id, context)
-            // Eliminar la posición actual y actualizar la vista
+            eliminar(aContacto.id, context)
             contactos.removeAt(position)
             notifyItemRemoved(position)
         }
     }
+
 
     // Función que elimina un producto de la base de datos en Firebase dado su ID.
     private fun eliminar(id: String?, context: Context) {

@@ -7,6 +7,6 @@ data class Contactos(
     val nombre:String? = null,
     val apellidos:String? = null,
     val telefono:String? = null,
-    var imagen: String? = null,
-    var cumpleanos: Date? = null
+    var cumpleanos: String? = null,
+    var imagen: String? = null
 )
