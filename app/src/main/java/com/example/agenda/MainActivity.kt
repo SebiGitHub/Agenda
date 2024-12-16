@@ -14,6 +14,8 @@ import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,62 +70,49 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Guardar contacto
-        // Guardar contacto
         binding.btnGuardar.setOnClickListener {
             val nombre = binding.etNombreContacto.text.toString()
             val apellidos = binding.etApellidosContacto.text.toString()
             val telefono = binding.etTelefonoContacto.text.toString()
             val fechaNacimiento = binding.etCumpleanioContacto.text.toString()
 
-            // Verificar que todos los campos estén completos
-            if (nombre.isEmpty()) {
-                binding.etNombreContacto.error = "Nombre requerido"
-                return@setOnClickListener
-            }
-            if (apellidos.isEmpty()) {
-                binding.etApellidosContacto.error = "Apellidos requerido"
-                return@setOnClickListener
-            }
-            if (telefono.isEmpty()) {
-                binding.etTelefonoContacto.error = "Teléfono requerido"
-                return@setOnClickListener
-            }
-            if (fechaNacimiento.isEmpty()) {
-                binding.etCumpleanioContacto.error = "Fecha de cumpleaños requerida"
-                return@setOnClickListener
-            }
-            if (imagenUri == null) {
-                Toast.makeText(this, "Debes seleccionar una imagen", Toast.LENGTH_SHORT).show()
+            if (nombre.isEmpty() || apellidos.isEmpty() || telefono.isEmpty() || fechaNacimiento.isEmpty() || imagenUri == null) {
+                Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Crear objeto contacto
-            val id = database.push().key  // Generar ID único
-
-            val contactos = Contactos(
-                id = id,
-                nombre = nombre,
-                apellidos = apellidos,
-                telefono = telefono,
-                cumpleanos = fechaNacimiento,
-                imagen = imagenUri.toString() // Guardar URI como String
-            )
-
-            // Guardar en la base de datos de Firebase
-            id?.let {
-                database.child(it).setValue(contactos)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Contacto añadido con éxito", Toast.LENGTH_LONG).show()
-                        // Limpiar campos
-                        binding.etNombreContacto.setText("")
-                        binding.etApellidosContacto.setText("")
-                        binding.etTelefonoContacto.setText("")
-                        binding.etCumpleanioContacto.setText("")
-                        binding.ivImagen.setImageResource(R.drawable.ic_launcher_foreground)
-                        imagenUri = null
-                    }.addOnFailureListener {
-                        Toast.makeText(this, "Error al guardar el contacto", Toast.LENGTH_LONG).show()
+            val storageRef = FirebaseStorage.getInstance().getReference("imagenes/${UUID.randomUUID()}")
+            imagenUri?.let { uri ->
+                storageRef.putFile(uri).addOnSuccessListener { taskSnapshot ->
+                    // Obtener la URL de descarga de Firebase Storage
+                    storageRef.downloadUrl.addOnSuccessListener { imageUrl ->
+                        val id = database.push().key
+                        val contacto = Contactos(
+                            id = id,
+                            nombre = nombre,
+                            apellidos = apellidos,
+                            telefono = telefono,
+                            cumpleanos = fechaNacimiento,
+                            imagen = imageUrl.toString() // Guardar la URL pública
+                        )
+                        // Guardar en Firebase Realtime Database
+                        id?.let {
+                            database.child(it).setValue(contacto)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Contacto añadido", Toast.LENGTH_SHORT).show()
+                                    // Limpiar campos
+                                    binding.etNombreContacto.setText("")
+                                    binding.etApellidosContacto.setText("")
+                                    binding.etTelefonoContacto.setText("")
+                                    binding.etCumpleanioContacto.setText("")
+                                    binding.ivImagen.setImageResource(R.drawable.ic_launcher_foreground)
+                                    imagenUri = null
+                                }
+                        }
                     }
+                }.addOnFailureListener {
+                    Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
