@@ -46,20 +46,13 @@ class AdapterContacto(private val contactos: ArrayList<Contactos>, private val c
         holder.fechaCumple.text = "Cumpleaños: ${aContacto.cumpleanos}"
 
         // Cargar imagen con Glide
-        val fondoLayout = holder.itemView.findViewById<LinearLayout>(R.id.imgDefectoFondo)
-        Glide.with(context)
-            .load(aContacto.imagen) // URL pública de Firebase
-            .placeholder(R.color.verde) // Color por defecto si está cargando
-            .error(R.color.verde) // Color si falla la carga
-            .into(object : com.bumptech.glide.request.target.CustomTarget<Drawable>() {
-                override fun onResourceReady(resource: Drawable, transition: com.bumptech.glide.request.transition.Transition<in Drawable>?) {
-                    fondoLayout.background = resource
-                }
+        val fondoLayout = holder.itemView.findViewById<LinearLayout>(R.id.ivImagenContacto)
 
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    fondoLayout.setBackgroundColor(context.getColor(R.color.verde))
-                }
-            })
+        Glide.with(holder.itemView.context)
+            .load(aContacto.imagen)
+            .placeholder(R.color.verde)
+            .error(R.drawable.ic_launcher_foreground)
+            .into(holder.itemView.findViewById(R.id.ivImagenContacto))
 
         // Botón eliminar
         holder.btnEliminar.setOnClickListener {

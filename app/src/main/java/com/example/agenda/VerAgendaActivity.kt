@@ -16,17 +16,16 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class VerAgendaActivity : AppCompatActivity() {
-    //ViewBinding
+    // ViewBinding
     private lateinit var binding: ActivityVerAgendaBinding
-    //Lista de productos
+    // Lista de productos
     private lateinit var contactosList: ArrayList<Contactos>
-    //RecyclerView
+    // RecyclerView
     private lateinit var contactosRecyclerView: RecyclerView
-    //Firebase
+    // Firebase
     private lateinit var database: DatabaseReference
-    //Adapter
+    // Adapter
     private lateinit var adapterContactos: AdapterContacto
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,17 +42,16 @@ class VerAgendaActivity : AppCompatActivity() {
         adapterContactos = AdapterContacto(contactosList, this)
         contactosRecyclerView.adapter = adapterContactos
 
-        getProductos()
+        getContactos()
 
-
-        //Accion para volver al menu
+        // Acción para volver al menú
         binding.btnVolver.setOnClickListener {
-            //Funcion que vuelva a la actividad anterior
-            onBackPressedDispatcher.onBackPressed()
+            // Función que vuelve a la actividad anterior
+            onBackPressed()  // Esto maneja la navegación hacia MainActivity
         }
     }
 
-    private fun getProductos() {
+    private fun getContactos() {
         // Referencia a la base de datos de Firebase
         database = FirebaseDatabase.getInstance().getReference("Contactos")
 
@@ -89,6 +87,4 @@ class VerAgendaActivity : AppCompatActivity() {
             }
         })
     }
-
-
 }

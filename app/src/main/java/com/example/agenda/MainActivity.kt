@@ -11,19 +11,21 @@ import com.example.agenda.databinding.ActivityMainBinding
 import com.example.agenda.models.Contactos
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import com.google.firebase.storage.FirebaseStorage
-import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 
     // ViewBinding
     private lateinit var binding: ActivityMainBinding
 
-    // Firebase database
+    // Firebase Realtime Database
     private lateinit var database: DatabaseReference
+
+    // Firebase Storage
+    private lateinit var storage: FirebaseStorage
 
     // Uri para almacenar la imagen seleccionada
     private var imagenUri: Uri? = null
@@ -44,12 +46,34 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Inicializar Firebase Database y Storage
         database = FirebaseDatabase.getInstance().getReference("Contactos")
+        storage = FirebaseStorage.getInstance()
 
+        // Configurar el DatePicker
+        configurarDatePicker()
+
+        // Selección de imagen
+        binding.ivImagen.setOnClickListener {
+            selectImageLauncher.launch("image/*") // Permite al usuario seleccionar imágenes
+        }
+
+        // Guardar contacto en Firebase
+        binding.btnGuardar.setOnClickListener {
+            guardarContacto()
+        }
+
+        // Botón para ver contactos guardados
+        binding.btnVer.setOnClickListener {
+            val intent = Intent(this, VerAgendaActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun configurarDatePicker() {
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-        // DatePicker para la fecha de cumpleaños
         binding.etCumpleanioContacto.setOnClickListener {
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
@@ -63,63 +87,71 @@ class MainActivity : AppCompatActivity() {
 
             datePickerDialog.show()
         }
+    }
 
-        // Seleccionar imagen
-        binding.ivImagen.setOnClickListener {
-            selectImageLauncher.launch("image/*") // Abre la galería para seleccionar imágenes
+    private fun guardarContacto() {
+        val nombre = binding.etNombreContacto.text.toString()
+        val apellidos = binding.etApellidosContacto.text.toString()
+        val telefono = binding.etTelefonoContacto.text.toString()
+        val fechaNacimiento = binding.etCumpleanioContacto.text.toString()
+
+        // Validación de campos vacíos
+        if (nombre.isEmpty() || apellidos.isEmpty() || telefono.isEmpty() || fechaNacimiento.isEmpty() || imagenUri == null) {
+            Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
+            return
         }
 
-        // Guardar contacto
-        binding.btnGuardar.setOnClickListener {
-            val nombre = binding.etNombreContacto.text.toString()
-            val apellidos = binding.etApellidosContacto.text.toString()
-            val telefono = binding.etTelefonoContacto.text.toString()
-            val fechaNacimiento = binding.etCumpleanioContacto.text.toString()
-
-            if (nombre.isEmpty() || apellidos.isEmpty() || telefono.isEmpty() || fechaNacimiento.isEmpty() || imagenUri == null) {
-                Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val storageRef = FirebaseStorage.getInstance().getReference("imagenes/${UUID.randomUUID()}")
-            imagenUri?.let { uri ->
-                storageRef.putFile(uri).addOnSuccessListener { taskSnapshot ->
-                    // Obtener la URL de descarga de Firebase Storage
-                    storageRef.downloadUrl.addOnSuccessListener { imageUrl ->
-                        val id = database.push().key
-                        val contacto = Contactos(
-                            id = id,
-                            nombre = nombre,
-                            apellidos = apellidos,
-                            telefono = telefono,
-                            cumpleanos = fechaNacimiento,
-                            imagen = imageUrl.toString() // Guardar la URL pública
-                        )
-                        // Guardar en Firebase Realtime Database
-                        id?.let {
-                            database.child(it).setValue(contacto)
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Contacto añadido", Toast.LENGTH_SHORT).show()
-                                    // Limpiar campos
-                                    binding.etNombreContacto.setText("")
-                                    binding.etApellidosContacto.setText("")
-                                    binding.etTelefonoContacto.setText("")
-                                    binding.etCumpleanioContacto.setText("")
-                                    binding.ivImagen.setImageResource(R.drawable.ic_launcher_foreground)
-                                    imagenUri = null
-                                }
-                        }
+        // Subir la imagen a Firebase Storage
+        imagenUri?.let { uri ->
+            val storageRef = storage.reference.child("images/${System.currentTimeMillis()}.jpg")
+            storageRef.putFile(uri)
+                .addOnSuccessListener { taskSnapshot ->
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                        // Guardar la URL de la imagen en Firebase Database
+                        guardarEnRealtimeDatabase(nombre, apellidos, telefono, fechaNacimiento, downloadUrl.toString())
                     }
-                }.addOnFailureListener {
+                }
+                .addOnFailureListener {
                     Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show()
                 }
-            }
         }
+    }
 
+    private fun guardarEnRealtimeDatabase(
+        nombre: String,
+        apellidos: String,
+        telefono: String,
+        fechaNacimiento: String,
+        imagenUrl: String
+    ) {
+        val id = database.push().key // Generar una clave única
+        val contacto = Contactos(
+            id = id,
+            nombre = nombre,
+            apellidos = apellidos,
+            telefono = telefono,
+            cumpleanos = fechaNacimiento,
+            imagen = imagenUrl // Guardar la URL de la imagen
+        )
 
-        binding.btnVer.setOnClickListener {
-            val intent = Intent(this, VerAgendaActivity::class.java)
-            startActivity(intent)
+        id?.let {
+            database.child(it).setValue(contacto)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Contacto guardado correctamente", Toast.LENGTH_SHORT).show()
+                    limpiarCampos()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Error al guardar el contacto", Toast.LENGTH_SHORT).show()
+                }
         }
+    }
+
+    private fun limpiarCampos() {
+        binding.etNombreContacto.setText("")
+        binding.etApellidosContacto.setText("")
+        binding.etTelefonoContacto.setText("")
+        binding.etCumpleanioContacto.setText("")
+        binding.ivImagen.setImageResource(R.drawable.ic_launcher_foreground)
+        imagenUri = null
     }
 }
