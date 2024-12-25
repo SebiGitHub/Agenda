@@ -42,8 +42,12 @@ android {
 
 dependencies {
 
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
-    implementation("com.google.firebase:firebase-analytics")
+    implementation ("androidx.cardview:cardview:1.0.0")
+    implementation ("com.google.android.material:material:1.9.0")
+
+
+    implementation (platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation ("com.google.firebase:firebase-analytics")
 
     implementation ("com.google.firebase:firebase-storage:20.2.1")
     implementation ("com.google.firebase:firebase-database:20.3.1")

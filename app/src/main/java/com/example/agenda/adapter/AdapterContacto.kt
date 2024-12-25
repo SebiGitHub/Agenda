@@ -38,9 +38,9 @@ class AdapterContacto(private val contactos: ArrayList<Contactos>, private val c
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val contacto = contactos[position]
-        holder.nombre.text = contacto.nombre
-        holder.apellidos.text = contacto.apellidos
-        holder.telefono.text = contacto.telefono
+        holder.nombre.text = "Nombre: ${contacto.nombre}"
+        holder.apellidos.text = "Apellidos: ${contacto.apellidos}"
+        holder.telefono.text = "Teléfono: ${contacto.telefono}"
         holder.fechaCumple.text = "Cumpleaños: ${contacto.cumpleanos}"
 
         val imagenBytes = Base64.decode(contacto.imagen, Base64.DEFAULT)

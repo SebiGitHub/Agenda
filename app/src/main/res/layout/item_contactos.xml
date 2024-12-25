@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/card_border"
         android:orientation="horizontal"
         android:padding="16dp">
 
@@ -24,10 +25,11 @@
                 android:id="@+id/tvContacto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:textColor="@color/titulo"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                tools:text="@string/contacto" />
+                android:text="@string/contacto" />
+
 
             <TextView
                 android:id="@+id/tvNombre"
@@ -70,6 +72,7 @@
                 android:id="@+id/btnEliminar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/fondo_boton"
                 android:layout_marginTop="8dp"
                 android:text="@string/eliminar" />
         </LinearLayout>
@@ -81,6 +84,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
+            android:background="@color/fondo_boton"
             android:scaleType="centerCrop"
             android:contentDescription="@string/contacto"
             android:src="@drawable/ic_launcher_foreground" />
