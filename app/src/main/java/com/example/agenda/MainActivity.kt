@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Base64
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,6 +45,11 @@ class MainActivity : AppCompatActivity() {
         database = FirebaseDatabase.getInstance().getReference("Contactos")
 
         configurarDatePicker()
+
+        // Limitar el formato de fecha en el EditText para que sea "dd/MM/yyyy"
+        binding.etCumpleanioContacto.filters = arrayOf(
+            InputFilter.LengthFilter(10) // Permite hasta 10 caracteres (formato dd/MM/yyyy)
+        )
 
         binding.ivImagen.setOnClickListener {
             selectImageLauncher.launch("image/*")
@@ -92,18 +98,48 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun validarTelefono(telefono: String): Boolean {
+        // Verificar que el teléfono tenga exactamente 9 dígitos
+        return telefono.length == 9 && telefono.all { it.isDigit() }
+    }
+
+    private fun validarFecha(fecha: String): Boolean {
+        // Validar que la fecha tenga el formato "dd/MM/yyyy"
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        try {
+            dateFormat.parse(fecha)
+            return true
+        } catch (e: Exception) {
+            return false
+        }
+    }
+
     private fun guardarContacto() {
         val nombre = binding.etNombreContacto.text.toString()
         val apellidos = binding.etApellidosContacto.text.toString()
         val telefono = binding.etTelefonoContacto.text.toString()
         val fechaNacimiento = binding.etCumpleanioContacto.text.toString()
 
-        if (nombre.isEmpty() || apellidos.isEmpty() || telefono.isEmpty() || fechaNacimiento.isEmpty() || imagenUri == null) {
+        // Validación de campos vacíos
+        if (nombre.isEmpty() || apellidos.isEmpty() || imagenUri == null) {
             Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
             return
         }
 
+        // Validar teléfono
+        if (!validarTelefono(telefono)) {
+            Toast.makeText(this, "El teléfono debe tener 9 dígitos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Validar fecha
+        if (!validarFecha(fechaNacimiento)) {
+            Toast.makeText(this, "La fecha debe tener el formato dd/MM/yyyy", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val imagenBase64 = convertirImagenABase64(imagenUri!!)
+
         if (imagenBase64 == null) {
             Toast.makeText(this, "Error al procesar la imagen", Toast.LENGTH_SHORT).show()
             return
