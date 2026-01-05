@@ -1,6 +1,6 @@
 Qué es
 
-Agenda es una aplicación (probablemente de escritorio o consola) diseñada para gestionar entradas — ya sean contactos, citas, tareas o eventos — de forma organizada. Permite crear, consultar, modificar y eliminar elementos; en otras palabras, implementa operaciones CRUD básicas (Create, Read, Update, Delete).
+Agenda es una aplicación (De escritorio y consola) diseñada para gestionar entradas — ya sean contactos, citas, tareas o eventos — de forma organizada. Permite crear, consultar, modificar y eliminar elementos; en otras palabras, implementa operaciones CRUD básicas (Create, Read, Update, Delete).
 
 Para qué sirve
 
