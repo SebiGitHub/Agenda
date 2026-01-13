@@ -1,7 +1,7 @@
 # App Agenda (Android)
 
 ## Qué es
-Agenda es una aplicación (De escritorio y consola) diseñada para gestionar entradas — ya sean contactos, citas, tareas o eventos — de forma organizada con autenticación de usuarios y almacenamiento en la nube mediante Firebase. Permite crear, consultar, modificar y eliminar elementos; en otras palabras, implementa operaciones CRUD básicas (Create, Read, Update, Delete).
+Agenda es una aplicación diseñada para gestionar entradas — ya sean contactos, citas, tareas o eventos — de forma organizada con autenticación de usuarios y almacenamiento en la nube mediante Firebase. Permite crear, consultar, modificar y eliminar elementos; en otras palabras, implementa operaciones CRUD básicas (Create, Read, Update, Delete).
 
 ## Para qué sirve
 Agenda sirve como herramienta personal o de pequeño equipo para llevar un registro ordenado de información recurrente: contactos, reuniones, pendientes, citas u otros datos útiles. Facilita mantener un histórico accesible y editable, lo que ayuda a no perder información importante y organizar tareas o contactos de forma clara.
