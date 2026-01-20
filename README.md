@@ -11,7 +11,6 @@ Agenda sirve como herramienta personal o de pequeño equipo para llevar un regis
 - Kotlin
 - Android Studio
 - Firebase (Auth + base de datos, Realtime Database)
-- (Opcional) Material Design
 
 ## Features
 - Registro / inicio de sesión de usuarios
